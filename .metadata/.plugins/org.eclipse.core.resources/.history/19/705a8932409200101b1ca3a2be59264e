@@ -1,0 +1,68 @@
+package com.apipoc.demo.service;
+
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
+
+import com.apipoc.demo.dto.ApiRequestDto;
+import com.apipoc.demo.dto.ApiResponseDto;
+import com.apipoc.demo.entity.ApiDetails;
+import com.apipoc.demo.repo.ApiRepository;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class ApiService {
+
+    private final ApiRepository repository;
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    // Save list of APIs from JSON
+    public List<ApiDetails> saveApis(List<ApiRequestDto> requests) {
+        List<ApiDetails> apiDetails = requests.stream()
+                .map(req -> ApiDetails.builder()
+                        .name(req.getName())
+                        .url(req.getUrl())
+                        .method(req.getMethod())
+                        .build())
+                .toList();
+        return repository.saveAll(apiDetails);
+    }
+
+    // Get API details by ID
+    public ApiResponseDto getApiDetails(Long id) {
+        ApiDetails api = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("API not found with id: " + id));
+
+        return ApiResponse.builder()
+                .id(api.getId())
+                .name(api.getName())
+                .url(api.getUrl())
+                .method(api.getMethod())
+                .build();
+    }
+
+    // Invoke third-party API
+    public ApiResponse invokeApi(Long id) {
+        ApiDetails api = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("API not found with id: " + id));
+
+        Object result = null;
+        if ("GET".equalsIgnoreCase(api.getMethod())) {
+            result = restTemplate.getForObject(api.getUrl(), Object.class);
+        } else {
+            throw new UnsupportedOperationException("Only GET supported in POC");
+        }
+
+        return ApiResponse.builder()
+                .id(api.getId())
+                .name(api.getName())
+                .url(api.getUrl())
+                .method(api.getMethod())
+                .response(result)
+                .build();
+    }
+}
+

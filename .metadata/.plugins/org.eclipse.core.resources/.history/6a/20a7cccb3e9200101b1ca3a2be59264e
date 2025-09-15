@@ -1,0 +1,5 @@
+package com.apipoc.demo.entity;
+
+public class ApiDetails {
+
+}
