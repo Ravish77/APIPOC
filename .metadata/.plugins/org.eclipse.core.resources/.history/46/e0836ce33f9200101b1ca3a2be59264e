@@ -1,5 +1,0 @@
-package com.apipoc.demo.repo;
-
-public interface ApiRepository {
-
-}

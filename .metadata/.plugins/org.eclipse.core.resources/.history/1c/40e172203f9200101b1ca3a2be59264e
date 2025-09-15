@@ -1,5 +1,0 @@
-package com.apipoc.demo.dto;
-
-public class ApiResponseDto {
-
-}
