@@ -52,7 +52,17 @@ public class ApiService {
         Object result = null;
         if ("GET".equalsIgnoreCase(api.getMethod())) {
             result = restTemplate.getForObject(api.getUrl(), Object.class);
-        } else {
+        } 
+        else if("POST".equalsIgnoreCase(api.getMethod())){
+            result = restTemplate.getForObject(api.getUrl(),Object.class);
+        }
+        else if("PUT".equalsIgnoreCase(api.getMethod())){
+            result = restTemplate.getForObject(api.getUrl(),Object.class);
+        }
+        else if("DELETE".equalsIgnoreCase(api.getMethod())){
+            result = restTemplate.getForObject(api.getUrl(),Object.class);
+        }
+        else {
             throw new UnsupportedOperationException("Only GET supported in POC");
         }
 
